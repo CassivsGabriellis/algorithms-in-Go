@@ -33,19 +33,19 @@ func walk(maze []string, wall string, currentPoint Point, end Point, seen [][]bo
 	}
 
 	//3. It's the end
-	if currentPoint.x == end.x && currentPoint.y == end.y {
+	if currentPoint == end {
 		path = append(path, end)
 		return true
 	}
 
 	//4. If we have seen it
-	if seen[currentPoint.x][currentPoint.y] {
+	if seen[currentPoint.y][currentPoint.x] {
 		return false
 	}
 
 	//Applying the 3 steps for recursion
 	// Step 1: Pre
-	seen[currentPoint.x][currentPoint.y] = true
+	seen[currentPoint.y][currentPoint.x] = true
 	path = append(path, currentPoint) //path.push() in JS
 
 	//Step 2: Recurse
@@ -65,8 +65,8 @@ func walk(maze []string, wall string, currentPoint Point, end Point, seen [][]bo
 	return false
 }
 
-// Implementing the SolveMaze function
-func solve(maze []string, wall string, start Point, end Point) []Point {
+// solve finds a path from the start point to the end point in the maze
+func solve(maze []string, wall string, start, end Point) []Point {
 	seen := make([][]bool, len(maze))
 	for i := range seen {
 		seen[i] = make([]bool, len(maze[0]))
@@ -98,8 +98,21 @@ func main() {
 
 	path := solve(maze, wall, start, end)
 
+	fmt.Println("Maze:")
+	for _, row := range maze {
+		fmt.Println(row)
+	}
+
 	fmt.Println("Path from start to end:")
 	for _, point := range path {
-		fmt.Printf("(%d, %d)", point.x, point.y)
+		// Mark the path in the maze by replacing the corresponding characters with dots
+		row := []byte(maze[point.y])
+		row[point.x] = '.'
+		maze[point.y] = string(row)
+	}
+
+	fmt.Println("Modified Maze:")
+	for _, row := range maze {
+		fmt.Println(row)
 	}
 }
